@@ -7,6 +7,15 @@
 #include <TFT_eSPI_S3.h>             // Include the graphics library for T-Display-S3
 #include <EasyButton.h>              // Include the button handler
 #include "Free_Fonts.h"              // Reference to the free fonts header
+#include <WiFi.h>
+#include <time.h>
+
+const char* ssid = "YOUR_WIFI_SSID";
+const char* password = "YOUR_WIFI_PASSWORD";
+
+const char* ntpServer = "pool.ntp.org";
+const long  gmtOffset_sec = 3600;  // Replace with your GMT offset (seconds)
+const int   daylightOffset_sec = 3600;  // Replace with your daylight offset (seconds)
 
 //Global variables for displayed values
 float Pa;                            
@@ -53,6 +62,16 @@ void setup() {
   tft.fillScreen(TFT_BLACK);          // clear the screen
   drawScreen();                       // initial draw of display
 
+  // Connect to Wi-Fi
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("Connected to WiFi");
+
+  // Init and get the time
+  configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
 }
 //end setup
 
@@ -307,6 +326,32 @@ void transTemp() {
   spr1.deleteSprite();
 }
 
+void drawCombinedView() {
+  spr.fillSprite(TFT_BLACK);
+  
+  // Time
+  spr.setTextColor(TFT_YELLOW);
+  spr.setFreeFont(FSS12);
+  spr.drawString(getTimeString(), 10, 10, GFXFF);
+  
+  // Temperature
+  spr.setTextColor(TFT_WHITE);
+  spr.setFreeFont(FSS18);
+  spr.drawString(String(cTemp, 1) + "°C", 10, 40, GFXFF);
+  
+  // Humidity
+  spr.setTextColor(TFT_CYAN);
+  spr.setFreeFont(FSS18);
+  spr.drawString(String(cHumid) + "% RH", 10, 80, GFXFF);
+  
+  // Pressure
+  spr.setTextColor(TFT_GREEN);
+  spr.setFreeFont(FSS18);
+  spr.drawString(String(cBaro) + " inHg", 10, 120, GFXFF);
+  
+  spr.pushSprite(0, 0);
+}
+
 void drawScreen() {
 
    readSensors();                          // read the sensors and calculate values
@@ -319,19 +364,39 @@ void drawScreen() {
     case 3: writeHumid(); break;
     case 4: transBaro(); displayMode = 5; break;
     case 5: writeBaro(); break;
-    case 6: transTemp(); displayMode = 1; break;
+    case 6: drawCombinedView(); displayMode = 1; break;
   }
 }
 
-void loop() {                              // main program loop
+void loop() {
+  button1.read();
+  
+  static unsigned long lastDisplayUpdate = 0;
+  static unsigned long lastSensorUpdate = 0;
+  unsigned long currentMillis = millis();
 
-button1.read();                            // read the button
-long now = millis();
-if (now - lastUpdate > 60000) {            // update the current display at this interval in ms
-    lastUpdate = now;
-    displayMode++;
+  // Update display every second for clock
+  if (currentMillis - lastDisplayUpdate >= 1000) {
     drawScreen();
+    lastDisplayUpdate = currentMillis;
+  }
+
+  // Update sensor readings every minute
+  if (currentMillis - lastSensorUpdate >= 60000) {
+    getReadings();
+    lastSensorUpdate = currentMillis;
   }
 }
 
 //end loop
+
+String getTimeString() {
+  struct tm timeinfo;
+  if(!getLocalTime(&timeinfo)){
+    Serial.println("Failed to obtain time");
+    return "00:00:00";
+  }
+  char timeStringBuff[9]; //HH:MM:SS + null terminator
+  strftime(timeStringBuff, sizeof(timeStringBuff), "%H:%M:%S", &timeinfo);
+  return String(timeStringBuff);
+}

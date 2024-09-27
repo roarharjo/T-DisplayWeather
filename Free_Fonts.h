@@ -1,49 +1,73 @@
-// Attach this header file to your sketch to use the GFX Free Fonts. You can write
-// sketches without it, but it makes referencing them easier.
+// Free_Fonts.h
+// Comprehensive font definitions for GFX Free Fonts
 
-// This calls up ALL the fonts but they only get loaded if you actually
-// use them in your sketch.
-//
-// No changes are needed to this header file unless new fonts are added to the
-// library "Fonts/GFXFF" folder.
-//
-// To save a lot of typing long names, each font can easily be referenced in the
-// sketch in three ways, either with:
-//
-//    1. Font file name with the & in front such as &FreeSansBoldOblique24pt7b
-//       an example being:
-//
-//       tft.setFreeFont(&FreeSansBoldOblique24pt7b);
-//
-//    2. FF# where # is a number determined by looking at the list below
-//       an example being:
-//
-//       tft.setFreeFont(FF32);
-//
-//    3. An abbreviation of the file name. Look at the list below to see
-//       the abbreviations used, for example:
-//
-//       tft.setFreeFont(FSSBO24)
-//
-//       Where the letters mean:
-//       F = Free font
-//       M = Mono
-//      SS = Sans Serif (double S to distinguish is form serif fonts)
-//       S = Serif
-//       B = Bold
-//       O = Oblique (letter O not zero)
-//       I = Italic
-//       # =  point size, either 9, 12, 18 or 24
-//
-//  Setting the font to NULL will select the GLCD font:
-//
-//      tft.setFreeFont(NULL); // Set font to GLCD
+/*
+USAGE INSTRUCTIONS:
+
+1. Include this header in your sketch to use GFX Free Fonts.
+2. Fonts are only loaded if used in your sketch.
+3. No changes needed unless new fonts are added to "Fonts/GFXFF" folder.
+
+Font Reference Methods:
+1. Font file name with '&':
+   Example: tft.setFreeFont(&FreeSansBoldOblique24pt7b);
+
+2. FF# define (see list below):
+   Example: tft.setFreeFont(FF32);
+
+3. Abbreviation (see format below):
+   Example: tft.setFreeFont(FSSBO24)
+
+Abbreviation Format:
+F = Free font
+M = Mono
+SS = Sans Serif (double S to distinguish from Serif)
+S = Serif
+B = Bold
+O = Oblique (letter O not zero)
+I = Italic
+# = point size (9, 12, 18 or 24)
+
+Default GLCD Font:
+tft.setFreeFont(NULL); // Set font to GLCD
+*/
+
+// Font definitions
+#define FSSO9 &FreeSansOblique9pt7b
+#define FSSO12 &FreeSansOblique12pt7b
+#define FSSO18 &FreeSansOblique18pt7b
+#define FSSO24 &FreeSansOblique24pt7b
+
+#define FSSBO9 &FreeSansBoldOblique9pt7b
+#define FSSBO12 &FreeSansBoldOblique12pt7b
+#define FSSBO18 &FreeSansBoldOblique18pt7b
+#define FSSBO24 &FreeSansBoldOblique24pt7b
+
+#define FS9 &FreeSerif9pt7b
+#define FS12 &FreeSerif12pt7b
+#define FS18 &FreeSerif18pt7b
+#define FS24 &FreeSerif24pt7b
+
+#define FSI9 &FreeSerifItalic9pt7b
+#define FSI12 &FreeSerifItalic12pt7b
+#define FSI18 &FreeSerifItalic18pt7b
+#define FSI24 &FreeSerifItalic24pt7b
+
+#define FSB9 &FreeSerifBold9pt7b
+#define FSB12 &FreeSerifBold12pt7b
+#define FSB18 &FreeSerifBold18pt7b
+#define FSB24 &FreeSerifBold24pt7b
+
+#define FSBI9 &FreeSerifBoldItalic9pt7b
+#define FSBI12 &FreeSerifBoldItalic12pt7b
+#define FSBI18 &FreeSerifBoldItalic18pt7b
+#define FSBI24 &FreeSerifBoldItalic24pt7b
 
 #define LOAD_GFXFF
 
 #ifdef LOAD_GFXFF // Only include the fonts if LOAD_GFXFF is defined in User_Setup.h
 
-// Use these when printing or drawing text in GLCD and high rendering speed fonts
+// Font type definitions for printing or drawing text
 #define GFXFF 1
 #define GLCD  0
 #define FONT2 2
@@ -52,7 +76,7 @@
 #define FONT7 7
 #define FONT8 8
 
-// Use the following when calling setFont()
+// Use these when calling setFont()
 //
 // Reserved for GLCD font  // FF0
 //
